@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rdkcentral/Thunder/master/Tools/JsonGenerator/schemas/plugin.schema.json",
+  "info": {
+    "title": "RBusDiagnostics Plugin",
+    "callsign": "org.rdk.RBusDiagnostics",
+    "locator": "libWPEFrameworkRBusDiagnostics.so",
+    "status": "development",
+    "description": "Authorized access to bounded, device-wide RBus diagnostics maintained by RBusDiagnosticsReporter."
+  },
+  "interface": {
+    "$ref": "RBusDiagnostics.json#"
+  }
+}

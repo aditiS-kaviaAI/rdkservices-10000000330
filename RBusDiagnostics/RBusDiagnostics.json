@@ -1,0 +1,293 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rdkcentral/Thunder/master/Tools/JsonGenerator/schemas/interface.schema.json",
+  "jsonrpc": "2.0",
+  "info": {
+    "title": "RBusDiagnostics API",
+    "class": "RBusDiagnostics",
+    "description": "Authorized bounded snapshots and reset control for the device-wide RBus diagnostics reporter."
+  },
+  "methods": {
+    "getGlobalMetrics": {
+      "summary": "Returns the current bounded global RBus metrics snapshot.",
+      "params": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "result": {
+        "$ref": "#/definitions/snapshot"
+      },
+      "errors": [
+        {
+          "code": 503,
+          "message": "REPORTER_UNAVAILABLE"
+        }
+      ]
+    },
+    "getProviderMetrics": {
+      "summary": "Returns metrics for one retained provider identity.",
+      "params": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "provider"
+        ]
+      },
+      "result": {
+        "$ref": "#/definitions/providerSnapshot"
+      },
+      "errors": [
+        {
+          "code": 404,
+          "message": "UNKNOWN_PROVIDER"
+        },
+        {
+          "code": 503,
+          "message": "REPORTER_UNAVAILABLE"
+        }
+      ]
+    },
+    "getAllProviders": {
+      "summary": "Returns a bounded provider list.",
+      "params": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32,
+            "default": 32
+          }
+        },
+        "required": []
+      },
+      "result": {
+        "$ref": "#/definitions/providerList"
+      },
+      "errors": [
+        {
+          "code": 503,
+          "message": "REPORTER_UNAVAILABLE"
+        }
+      ]
+    },
+    "getSlowRequests": {
+      "summary": "Returns bounded newest-first slow-request records.",
+      "params": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32,
+            "default": 32
+          }
+        },
+        "required": []
+      },
+      "result": {
+        "$ref": "#/definitions/slowRequestList"
+      },
+      "errors": [
+        {
+          "code": 503,
+          "message": "REPORTER_UNAVAILABLE"
+        }
+      ]
+    },
+    "resetMetrics": {
+      "summary": "Resets reporter interval metrics and returns the new generation.",
+      "params": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "result": {
+        "$ref": "#/definitions/snapshot"
+      },
+      "errors": [
+        {
+          "code": 503,
+          "message": "REPORTER_UNAVAILABLE"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "reporterInstanceId": {
+          "type": "string",
+          "description": "Reporter lifetime identifier."
+        },
+        "reporterStartupEpochUs": {
+          "type": "string",
+          "description": "Reporter startup Unix epoch in microseconds."
+        },
+        "measurementGeneration": {
+          "type": "string",
+          "description": "Reporter reset generation."
+        },
+        "dataQuality": {
+          "type": "object",
+          "description": "Completeness and reporter quality indicators."
+        },
+        "operations": {
+          "type": "array",
+          "description": "Bounded global operation summaries."
+        }
+      },
+      "required": [
+        "reporterInstanceId",
+        "reporterStartupEpochUs",
+        "measurementGeneration",
+        "dataQuality"
+      ]
+    },
+    "providerSnapshot": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/snapshot"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "providerMetrics": {
+          "$ref": "#/definitions/provider"
+        }
+      },
+      "required": [
+        "providerMetrics"
+      ]
+    },
+    "providerList": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/snapshot"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "returnedCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "providers": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/definitions/provider"
+          }
+        }
+      }
+    },
+    "slowRequestList": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/snapshot"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "returnedCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "slowRequests": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/definitions/slowRequest"
+          }
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "state": {
+          "type": "string"
+        },
+        "registrationState": {
+          "type": "string"
+        },
+        "restartCount": {
+          "type": "string"
+        },
+        "requestCount": {
+          "type": "string"
+        },
+        "successCount": {
+          "type": "string"
+        },
+        "timeoutCount": {
+          "type": "string"
+        },
+        "errorCount": {
+          "type": "string"
+        },
+        "durationSumUs": {
+          "type": "string"
+        },
+        "minimumDurationUs": {
+          "type": "string"
+        },
+        "maximumDurationUs": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "state",
+        "registrationState",
+        "requestCount"
+      ]
+    },
+    "slowRequest": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "integer"
+        },
+        "monotonicEndUs": {
+          "type": "string"
+        },
+        "durationUs": {
+          "type": "string"
+        },
+        "measurementGeneration": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string",
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "operation",
+        "outcome",
+        "durationUs",
+        "measurementGeneration"
+      ]
+    }
+  }
+}
