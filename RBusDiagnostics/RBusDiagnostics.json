@@ -1,0 +1,110 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rdkcentral/Thunder/master/Tools/JsonGenerator/schemas/interface.schema.json",
+  "jsonrpc": "2.0",
+  "info": {
+    "title": "RBusDiagnostics API",
+    "class": "RBusDiagnostics",
+    "description": "Authorized access to current device-wide RBus diagnostic metrics. All latency and timestamp fields use microseconds."
+  },
+  "methods": {
+    "getGlobalMetrics": {
+      "summary": "Returns bounded device-wide RBus request and latency metrics.",
+      "params": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "reporterInstanceId": {
+            "type": "string",
+            "description": "Identifier for the current in-memory reporter instance."
+          },
+          "reporterStartupEpochUs": {
+            "type": "integer",
+            "description": "Reporter startup time as Unix epoch microseconds."
+          },
+          "measurementGeneration": {
+            "type": "integer",
+            "description": "Current generation; it increments after a successful reset."
+          },
+          "availability": {
+            "type": "string",
+            "enum": ["AVAILABLE", "DEGRADED"],
+            "description": "Availability of the reporter, not of an individual RBus provider."
+          },
+          "requestCount": { "type": "integer" },
+          "successCount": { "type": "integer" },
+          "errorCount": { "type": "integer" },
+          "timeoutCount": { "type": "integer" },
+          "minimumLatencyUs": { "type": "integer" },
+          "maximumLatencyUs": { "type": "integer" },
+          "averageLatencyUs": { "type": "integer" },
+          "p95LatencyUs": {
+            "type": ["integer", "null"],
+            "description": "Null until bounded percentile aggregation is enabled."
+          },
+          "p99LatencyUs": {
+            "type": ["integer", "null"],
+            "description": "Null until bounded percentile aggregation is enabled."
+          },
+          "dataQuality": {
+            "type": "object",
+            "properties": {
+              "observationsReceived": { "type": "integer" },
+              "malformedObservationsRejected": { "type": "integer" }
+            },
+            "required": ["observationsReceived", "malformedObservationsRejected"]
+          }
+        },
+        "required": [
+          "reporterInstanceId",
+          "reporterStartupEpochUs",
+          "measurementGeneration",
+          "availability",
+          "requestCount",
+          "successCount",
+          "errorCount",
+          "timeoutCount",
+          "minimumLatencyUs",
+          "maximumLatencyUs",
+          "averageLatencyUs",
+          "p95LatencyUs",
+          "p99LatencyUs",
+          "dataQuality"
+        ]
+      },
+      "errors": [
+        {
+          "code": 5,
+          "message": "REPORTER_UNAVAILABLE",
+          "description": "No compatible local RBusDiagnosticsReporter responded. The plugin does not return stale or zero-valued metrics."
+        }
+      ]
+    },
+    "resetMetrics": {
+      "summary": "Resets the reporter measurement interval without restarting RBus or providers.",
+      "params": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "reporterInstanceId": { "type": "string" },
+          "reporterStartupEpochUs": { "type": "integer" },
+          "measurementGeneration": { "type": "integer" },
+          "success": { "type": "boolean" }
+        },
+        "required": [
+          "reporterInstanceId",
+          "reporterStartupEpochUs",
+          "measurementGeneration",
+          "success"
+        ]
+      }
+    }
+  }
+}
