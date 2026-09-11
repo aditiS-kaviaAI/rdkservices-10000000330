@@ -76,6 +76,10 @@ option(PLUGIN_STORAGE_MANAGER "PLUGIN_STORAGE_MANAGER" OFF)
 add_definitions (-DPLUGIN_DEVICEDIAGNOSTICS)
 option(PLUGIN_DEVICEDIAGNOSTICS "PLUGIN_DEVICEDIAGNOSTICS" ON)
 
+# RBus diagnostics remains an opt-in development plugin until controlled
+# activation qualification has completed.
+option(PLUGIN_RBUSDIAGNOSTICS "Include RBusDiagnostics plugin" OFF)
+
 #add_definitions (-DHAS_API_DEVICEPROVISIONING)
 
 add_definitions (-DPLUGIN_SOUNDPLAYER)

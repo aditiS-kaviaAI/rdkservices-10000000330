@@ -1,0 +1,129 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rdkcentral/rdkservices/main/Tools/json_generator/schemas/interface.schema.json",
+  "jsonrpc": "2.0",
+  "info": {
+    "title": "RBusDiagnostics API",
+    "class": "RBusDiagnostics",
+    "description": "Authorized access to bounded device-wide RBus diagnostics. Successful methods return a bounded reporter-generated JSON object in reporterPayload. Reporter communication failures return REPORTER_UNAVAILABLE (-32070)."
+  },
+  "methods": {
+    "getGlobalMetrics": {
+      "summary": "Returns the bounded global reporter snapshot.",
+      "params": {
+        "type": "object",
+        "properties": {}
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "reporterPayload": {
+            "type": "string",
+            "description": "Bounded reporter-generated JSON object containing global operation metrics and quality metadata."
+          }
+        },
+        "required": [ "reporterPayload" ]
+      }
+    },
+    "getProviderMetrics": {
+      "summary": "Returns bounded metrics for one retained provider.",
+      "params": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "Provider identifier."
+          }
+        },
+        "required": [ "provider" ]
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "reporterPayload": {
+            "type": "string",
+            "description": "Bounded reporter-generated JSON object for the requested provider."
+          }
+        },
+        "required": [ "reporterPayload" ]
+      }
+    },
+    "getAllProviders": {
+      "summary": "Returns up to the requested bounded number of provider records.",
+      "params": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 128
+          }
+        },
+        "required": [ "limit" ]
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "reporterPayload": {
+            "type": "string",
+            "description": "Bounded reporter-generated JSON object containing no more than the requested number of provider records."
+          }
+        },
+        "required": [ "reporterPayload" ]
+      }
+    },
+    "getSlowRequests": {
+      "summary": "Returns up to the requested bounded number of retained slow requests.",
+      "params": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 128
+          }
+        },
+        "required": [ "limit" ]
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "reporterPayload": {
+            "type": "string",
+            "description": "Bounded reporter-generated JSON object containing no more than the requested retained slow requests."
+          }
+        },
+        "required": [ "reporterPayload" ]
+      }
+    },
+    "resetMetrics": {
+      "summary": "Atomically starts a new reporter measurement generation.",
+      "params": {
+        "type": "object",
+        "properties": {}
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "reporterPayload": {
+            "type": "string",
+            "description": "Bounded reporter-generated JSON object containing the committed measurement generation."
+          }
+        },
+        "required": [ "reporterPayload" ]
+      }
+    }
+  },
+  "errors": [
+    {
+      "code": -32070,
+      "message": "REPORTER_UNAVAILABLE",
+      "description": "The local reporter is absent, incompatible, disconnected, malformed, or timed out."
+    },
+    {
+      "code": -32071,
+      "message": "PROVIDER_NOT_FOUND",
+      "description": "The requested provider is not retained by the reporter."
+    }
+  ]
+}

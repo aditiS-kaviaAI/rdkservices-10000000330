@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rdkcentral/rdkservices/main/Tools/json_generator/schemas/plugin.schema.json",
+  "info": {
+    "title": "RBusDiagnostics Plugin",
+    "callsign": "org.rdk.RBusDiagnostics",
+    "locator": "libWPEFrameworkRBusDiagnostics.so",
+    "status": "development",
+    "description": "Provides authorized, bounded access to the private RBus diagnostics reporter."
+  },
+  "interface": {
+    "$ref": "RBusDiagnostics.json#"
+  }
+}
