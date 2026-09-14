@@ -1,0 +1,13 @@
+{
+    "$schema": "https://raw.githubusercontent.com/rdkcentral/rdkservices/main/Tools/json_generator/schemas/plugin.schema.json",
+    "info": {
+        "title": "RBusDiagnostics Plugin",
+        "callsign": "org.rdk.RBusDiagnostics",
+        "locator": "libWPEFrameworkRBusDiagnostics.so",
+        "status": "development",
+        "description": "Exposes bounded process-local RBus diagnostic snapshots. Deployed SecurityAgent ACL policy authorizes every method; reset and configuration mutation require the elevated deployed permission."
+    },
+    "interface": {
+        "$ref": "RBusDiagnostics.json#"
+    }
+}

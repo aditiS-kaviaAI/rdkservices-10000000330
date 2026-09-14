@@ -1,0 +1,3 @@
+callsign = "org.rdk.RBusDiagnostics"
+autostart = "@PLUGIN_RBUSDIAGNOSTICS_AUTOSTART@"
+startuporder = "@PLUGIN_RBUSDIAGNOSTICS_STARTUPORDER@"

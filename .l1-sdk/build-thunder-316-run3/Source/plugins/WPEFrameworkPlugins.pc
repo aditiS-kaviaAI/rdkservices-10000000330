@@ -1,0 +1,11 @@
+prefix=/home/kavia/workspace/code-generation/rdkservices-10000000330/.l1-sdk/install-316-run3/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/WPEFramework
+
+Name: WPEFrameworkPlugins
+Version: 2.1.15
+Description: Basic library to realize the glue between a proprietary plugin and the framework host.
+
+Libs: -L${libdir}  -lWPEFrameworkPlugins -lWPEFrameworkCore -lWPEFrameworkTracing -lWPEFrameworkCryptalgo -lWPEFrameworkProtocols 
+Cflags: -I${includedir}   -fexceptions -std=c++11 -Wno-psabi -funwind-tables -Wall  -D_TRACE_LEVEL=0 -D__NO_WCHAR_SUPPORT__ -DPLATFORM_PC_UNIX=1 -D_THUNDER_DEBUG -D__DEBUG__

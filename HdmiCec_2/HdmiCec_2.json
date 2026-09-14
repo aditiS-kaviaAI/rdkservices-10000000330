@@ -1,0 +1,9 @@
+{
+ "locator":"libWPEFrameworkHdmiCec_2.so",
+ "classname":"HdmiCec_2",
+ "precondition":[
+  "Platform"
+ ],
+ "callsign":"org.rdk.HdmiCec_2",
+ "autostart":false
+}

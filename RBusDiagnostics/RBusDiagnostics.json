@@ -1,0 +1,138 @@
+{
+    "$schema": "https://raw.githubusercontent.com/rdkcentral/rdkservices/main/Tools/json_generator/schemas/interface.schema.json",
+    "jsonrpc": "2.0",
+    "info": {
+        "title": "RBusDiagnostics API",
+        "class": "RBusDiagnostics",
+        "description": "Provides bounded, metadata-only RBus diagnostic snapshots. Request and response payloads, credentials, tokens, personal data, raw trace headers, and arbitrary provider error text are never exposed."
+    },
+    "common": {
+        "$ref": "../common/common.json"
+    },
+    "definitions": {
+        "status": {
+            "summary": "The explicit result of a local diagnostics operation.",
+            "type": "string",
+            "enum": ["OK", "DISABLED", "UNAVAILABLE", "ABI_MISMATCH", "NOT_FOUND", "LIMIT_INVALID", "INVALID_REQUEST"]
+        },
+        "nullableLatency": {
+            "summary": "A latency in microseconds, or null when no applicable samples exist.",
+            "type": ["integer", "null"]
+        },
+        "metrics": {
+            "type": "object",
+            "properties": {
+                "requestCount": {"type": "integer"},
+                "successCount": {"type": "integer"},
+                "errorCount": {"type": "integer"},
+                "timeoutCount": {"type": "integer"},
+                "epoch": {"type": "integer"},
+                "minLatencyUs": {"$ref": "#/definitions/nullableLatency"},
+                "maxLatencyUs": {"$ref": "#/definitions/nullableLatency"},
+                "averageLatencyUs": {"$ref": "#/definitions/nullableLatency"},
+                "p50LatencyUs": {"$ref": "#/definitions/nullableLatency"},
+                "p90LatencyUs": {"$ref": "#/definitions/nullableLatency"},
+                "p95LatencyUs": {"$ref": "#/definitions/nullableLatency"},
+                "p99LatencyUs": {"$ref": "#/definitions/nullableLatency"}
+            }
+        },
+        "statusResult": {
+            "type": "object",
+            "properties": {
+                "status": {"$ref": "#/definitions/status"},
+                "success": {"$ref": "#/common/success"}
+            },
+            "required": ["status", "success"]
+        },
+        "limit": {
+            "summary": "The maximum number of bounded records to return.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "example": 25
+        }
+    },
+    "methods": {
+        "getGlobalMetrics": {
+            "summary": "Returns copied global metrics; latency values are null when unavailable.",
+            "result": {
+                "allOf": [
+                    {"$ref": "#/definitions/statusResult"},
+                    {"$ref": "#/definitions/metrics"}
+                ]
+            }
+        },
+        "getProviderMetrics": {
+            "summary": "Returns copied metrics for one known provider.",
+            "params": {
+                "type": "object",
+                "properties": {
+                    "provider": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 127
+                    }
+                },
+                "required": ["provider"]
+            },
+            "result": {"$ref": "#/definitions/statusResult"}
+        },
+        "getAllProviders": {
+            "summary": "Returns up to 64 known provider aggregates.",
+            "params": {
+                "type": "object",
+                "properties": {"limit": {"$ref": "#/definitions/limit"}}
+            },
+            "result": {"$ref": "#/definitions/statusResult"}
+        },
+        "getSlowRequests": {
+            "summary": "Returns up to 100 metadata-only slow-request records in chronological order.",
+            "params": {
+                "type": "object",
+                "properties": {"limit": {"$ref": "#/definitions/limit"}}
+            },
+            "result": {"$ref": "#/definitions/statusResult"}
+        },
+        "resetMetrics": {
+            "summary": "Starts a new metrics epoch without changing RBus resources. Requires the deployed elevated mutation permission.",
+            "params": {"type": "object", "properties": {}},
+            "result": {"$ref": "#/definitions/statusResult"}
+        },
+        "getConfiguration": {
+            "summary": "Returns the active collector configuration.",
+            "result": {"$ref": "#/definitions/statusResult"}
+        },
+        "setConfiguration": {
+            "summary": "Atomically replaces a valid collector configuration. Requires the deployed elevated mutation permission.",
+            "params": {
+                "type": "object",
+                "properties": {
+                    "enabled": {"type": "boolean"},
+                    "slowRequestThresholdUs": {
+                        "type": "integer",
+                        "minimum": 1
+                    }
+                },
+                "required": ["enabled", "slowRequestThresholdUs"]
+            },
+            "result": {"$ref": "#/definitions/statusResult"}
+        }
+    },
+    "capabilities": {
+        "supportedOperations": ["GET", "SET", "METHOD_SYNC", "TABLE"],
+        "unavailable": [
+            "EVENT",
+            "EVENT_DELIVERY",
+            "SUBSCRIPTION",
+            "UNSUBSCRIBE",
+            "RETRY",
+            "RECOVERY",
+            "DIRECT_CONNECTION",
+            "WILDCARD",
+            "MULTI_PROVIDER",
+            "METHOD_ASYNC",
+            "NOTIFICATION",
+            "TRACE_CORRELATION"
+        ]
+    }
+}

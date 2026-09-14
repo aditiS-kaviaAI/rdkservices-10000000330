@@ -1,0 +1,17 @@
+/*
+ * Copyright 2026 RDK Management
+ *
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+#pragma once
+
+#ifndef MODULE_NAME
+#define MODULE_NAME Plugin_RBusDiagnostics
+#endif
+
+#include <plugins/plugins.h>
+#include <tracing/tracing.h>
+
+#undef EXTERNAL
+#define EXTERNAL
