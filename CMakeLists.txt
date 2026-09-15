@@ -221,10 +221,6 @@ if(PLUGIN_DEVICEDIAGNOSTICS)
     add_subdirectory(DeviceDiagnostics)
 endif()
 
-if(PLUGIN_RBUSDIAGNOSTICS)
-    add_subdirectory(RBusDiagnostics)
-endif()
-
 if(PLUGIN_HDCPPROFILE)
     add_subdirectory(HdcpProfile)
 endif()
